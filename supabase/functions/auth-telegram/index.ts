@@ -109,6 +109,23 @@ Deno.serve(async (req) => {
       }
     }
 
+    if (authUserId) {
+      const { error: upsertError } = await supabase.from('users').upsert(
+        {
+          id: authUserId,
+          tg_user_id: tgUserId,
+          first_name: userRaw.first_name || null,
+          last_name: userRaw.last_name || null,
+          username: userRaw.username || null,
+          photo_url: userRaw.photo_url || null
+        },
+        { onConflict: 'id' }
+      );
+      if (upsertError) {
+        return new Response(JSON.stringify({ error: upsertError.message }), { status: 500 });
+      }
+    }
+
     const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',
       email

@@ -7,6 +7,11 @@ type Post = {
   content: string;
   created_at: string;
   user_id: string;
+  users?: {
+    first_name: string | null;
+    last_name: string | null;
+    username: string | null;
+  } | null;
 };
 
 const MAX_LEN = 120;
@@ -20,7 +25,7 @@ const FeedPage = () => {
   const loadPosts = async () => {
     const { data, error: loadError } = await supabase
       .from('posts')
-      .select('id, content, created_at, user_id')
+      .select('id, content, created_at, user_id, users(first_name, last_name, username)')
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -28,7 +33,7 @@ const FeedPage = () => {
       setError(loadError.message);
       return;
     }
-    setPosts(data || []);
+    setPosts((data as Post[]) || []);
   };
 
   useEffect(() => {
@@ -56,13 +61,13 @@ const FeedPage = () => {
 
   return (
     <section className="page">
-      <div className="card">
+      <div className="card hero">
         <div className="card-title">Новый пост</div>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           maxLength={MAX_LEN}
-          placeholder="Коротко о себе или запросе"
+          placeholder="Запрос, предложение, идея..."
           rows={3}
         />
         <div className="row">
@@ -79,6 +84,12 @@ const FeedPage = () => {
         <div className="list">
           {posts.map((post) => (
             <div key={post.id} className="list-item">
+              <div className="row">
+                <strong>
+                  {(post.users?.first_name || '') + ' ' + (post.users?.last_name || '')}
+                </strong>
+                {post.users?.username && <span className="pill">@{post.users.username}</span>}
+              </div>
               <div className="post-content">{post.content}</div>
               <div className="muted">{new Date(post.created_at).toLocaleString()}</div>
             </div>

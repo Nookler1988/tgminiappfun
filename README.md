@@ -8,6 +8,7 @@
 ## Быстрый старт
 1. Создайте проект в Supabase.
 2. Примените миграцию из `supabase/migrations/0001_init.sql`.
+3. Примените `supabase/migrations/0002_rls_updates.sql`.
 3. Создайте функцию роли админа (например, вставкой в `user_roles`).
 4. Добавьте секреты Edge Functions:
    - `SUPABASE_URL`

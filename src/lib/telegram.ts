@@ -15,3 +15,8 @@ export const getInitData = (): string => {
   const tg = getTelegram();
   return tg?.initData || '';
 };
+
+export const getInitDataUnsafe = (): Record<string, unknown> => {
+  const tg = getTelegram();
+  return (tg?.initDataUnsafe || {}) as Record<string, unknown>;
+};

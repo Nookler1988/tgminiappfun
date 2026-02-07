@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { getUserId } from '../lib/auth';
 
@@ -13,6 +13,22 @@ const AdminPage = () => {
   const [tagType, setTagType] = useState<'skill' | 'interest'>('skill');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const check = async () => {
+      const userId = await getUserId();
+      if (!userId) return;
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+      setIsAdmin(!!data);
+    };
+    void check();
+  }, []);
 
   const createCircle = async () => {
     setLoading(true);
@@ -66,10 +82,22 @@ const AdminPage = () => {
     setTagName('');
   };
 
+  if (!isAdmin) {
+    return (
+      <section className="page">
+        <div className="card hero">
+          <div className="card-title">Админ‑раздел</div>
+          <div className="muted">Доступ только для администратора.</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="page">
-      <div className="card">
+      <div className="card hero">
         <div className="card-title">Админка</div>
+        <div className="muted">Управляйте кругами, тегами и контентом.</div>
         {error && <div className="error">{error}</div>}
       </div>
 

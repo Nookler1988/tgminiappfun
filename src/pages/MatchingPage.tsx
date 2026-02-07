@@ -82,15 +82,15 @@ const MatchingPage = () => {
 
   return (
     <section className="page">
-      <div className="card">
+      <div className="card hero">
         <div className="card-title">Подбор 1на1</div>
+        <div className="muted">Каждый понедельник в 10:00 подбираем партнёра.</div>
         <div className="row">
           <div>Участвовать в подборе</div>
           <button onClick={toggleOptIn} disabled={loading}>
             {optIn ? 'Отказаться' : 'Участвовать'}
           </button>
         </div>
-        <div className="muted">Подбор по понедельникам в 10:00.</div>
         {error && <div className="error">{error}</div>}
       </div>
 
@@ -110,7 +110,7 @@ const MatchingPage = () => {
                   <button onClick={() => consent(m.id, true)} disabled={loading}>
                     Согласен
                   </button>
-                  <button onClick={() => consent(m.id, false)} disabled={loading}>
+                  <button onClick={() => consent(m.id, false)} disabled={loading} className="ghost">
                     Отказаться
                   </button>
                 </div>

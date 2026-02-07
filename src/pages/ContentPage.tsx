@@ -31,8 +31,11 @@ const ContentPage = () => {
 
   return (
     <section className="page">
-      <div className="card">
+      <div className="card hero">
         <div className="card-title">Обучающие материалы</div>
+        <div className="muted">Подборка видео, аудио и статей.</div>
+      </div>
+      <div className="card">
         {error && <div className="error">{error}</div>}
         <div className="list">
           {items.map((item) => (

@@ -28,8 +28,11 @@ const TestsPage = () => {
 
   return (
     <section className="page">
-      <div className="card">
+      <div className="card hero">
         <div className="card-title">Тесты</div>
+        <div className="muted">Проверяйте знания и отслеживайте прогресс.</div>
+      </div>
+      <div className="card">
         {error && <div className="error">{error}</div>}
         <div className="list">
           {quizzes.map((q) => (

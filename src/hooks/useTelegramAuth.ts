@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { getInitData, getTelegram } from '../lib/telegram';
+import { getInitData, getInitDataUnsafe, getTelegram } from '../lib/telegram';
+import { getUserId } from '../lib/auth';
 
 const functionsUrl = import.meta.env.VITE_SUPABASE_FUNCTIONS_URL as string | undefined;
 
@@ -18,6 +19,22 @@ export const useTelegramAuth = () => {
       setError(null);
       const existing = await supabase.auth.getSession();
       if (existing.data.session) {
+        const userId = await getUserId();
+        const unsafe = getInitDataUnsafe();
+        const tgUser = unsafe.user as
+          | { first_name?: string; last_name?: string; username?: string; photo_url?: string }
+          | undefined;
+        if (userId && tgUser) {
+          await supabase
+            .from('users')
+            .update({
+              first_name: tgUser.first_name || null,
+              last_name: tgUser.last_name || null,
+              username: tgUser.username || null,
+              photo_url: tgUser.photo_url || null
+            })
+            .eq('id', userId);
+        }
         setLoading(false);
         return;
       }
@@ -49,6 +66,23 @@ export const useTelegramAuth = () => {
           access_token: json.access_token,
           refresh_token: json.refresh_token
         });
+
+        const userId = await getUserId();
+        const unsafe = getInitDataUnsafe();
+        const tgUser = unsafe.user as
+          | { first_name?: string; last_name?: string; username?: string; photo_url?: string }
+          | undefined;
+        if (userId && tgUser) {
+          await supabase
+            .from('users')
+            .update({
+              first_name: tgUser.first_name || null,
+              last_name: tgUser.last_name || null,
+              username: tgUser.username || null,
+              photo_url: tgUser.photo_url || null
+            })
+            .eq('id', userId);
+        }
       } catch (e) {
         const message = e instanceof Error ? e.message : 'Unknown error';
         setError(message);
