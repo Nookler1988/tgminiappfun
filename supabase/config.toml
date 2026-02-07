@@ -1,0 +1,19 @@
+project_id = "qcrwmauokrlpagngebeb"
+
+[api]
+port = 54321
+schemas = ["public", "auth", "storage"]
+extra_search_path = ["public"]
+max_rows = 1000
+
+[db]
+port = 54322
+
+[realtime]
+enabled = true
+
+[studio]
+port = 54323
+
+[storage]
+file_size_limit = "50MiB"
