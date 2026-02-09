@@ -13,7 +13,11 @@ type Match = {
   partner_bio: string | null;
 };
 
-const MatchingPage = () => {
+type MatchingPageProps = {
+  onBack?: () => void;
+};
+
+const MatchingPage = ({ onBack }: MatchingPageProps) => {
   const [optIn, setOptIn] = useState(false);
   const [matches, setMatches] = useState<Match[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -83,12 +87,19 @@ const MatchingPage = () => {
   return (
     <section className="page">
       <div className="card hero">
-        <div className="card-title">Подбор 1на1</div>
-        <div className="muted">Каждый понедельник в 10:00 подбираем партнёра.</div>
+        <div className="card-title">Random‑cafe</div>
+        <div className="muted">Еженедельные мэтчи 1на1. Подключитесь к поиску.</div>
+        {onBack && <button className="back-button" onClick={onBack}>Назад</button>}
+      </div>
+
+      <div className="card">
         <div className="row">
-          <div>Участвовать в подборе</div>
-          <button onClick={toggleOptIn} disabled={loading}>
-            {optIn ? 'Отказаться' : 'Участвовать'}
+          <div>
+            <div className="card-title">Участвовать в Random‑cafe</div>
+            <div className="muted">Вы будете получать предложения для встреч каждую неделю</div>
+          </div>
+          <button className={optIn ? 'ios-switch on' : 'ios-switch'} onClick={toggleOptIn} disabled={loading}>
+            <span className="ios-knob" />
           </button>
         </div>
         {error && <div className="error">{error}</div>}
@@ -96,28 +107,43 @@ const MatchingPage = () => {
 
       <div className="card">
         <div className="card-title">Мои подборы</div>
-        <div className="list">
+        <div className="matching-list">
           {matches.map((m) => (
-            <div key={m.id} className="list-item">
-              <div className="row">
-                <strong>{m.partner_name || 'Участник'}</strong>
-                <span className="pill">{m.status}</span>
+            <div key={m.id} className="matching-card">
+              <div className="matching-header">
+                <div className="partner-avatar">
+                  {m.partner_name ? (
+                    <span>{m.partner_name.charAt(0)}</span>
+                  ) : (
+                    <span>U</span>
+                  )}
+                </div>
+                <div className="matching-info">
+                  <div className="partner-name">{m.partner_name || 'Участник'}</div>
+                  {m.partner_username && <div className="partner-username">@{m.partner_username}</div>}
+                </div>
+                <span className={`match-status ${m.status}`}>{m.status}</span>
               </div>
-              {m.partner_username && <div className="muted">@{m.partner_username}</div>}
-              {m.partner_bio && <div>{m.partner_bio}</div>}
+              {m.partner_bio && <div className="partner-bio">{m.partner_bio}</div>}
               {m.status === 'pending' && (
-                <div className="row">
-                  <button onClick={() => consent(m.id, true)} disabled={loading}>
+                <div className="matching-actions">
+                  <button onClick={() => consent(m.id, true)} disabled={loading} className="accept-btn">
                     Согласен
                   </button>
-                  <button onClick={() => consent(m.id, false)} disabled={loading} className="ghost">
+                  <button onClick={() => consent(m.id, false)} disabled={loading} className="decline-btn">
                     Отказаться
                   </button>
                 </div>
               )}
             </div>
           ))}
-          {!matches.length && <div className="muted">Пока нет подборов.</div>}
+          {!matches.length && (
+            <div className="no-matches">
+              <div className="empty-state-icon">☕</div>
+              <div className="muted">Пока нет предстоящих встреч</div>
+              <div className="small-muted">Как только вы подтвердите участие, мы подберём вам партнёра</div>
+            </div>
+          )}
         </div>
       </div>
     </section>

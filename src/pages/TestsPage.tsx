@@ -7,7 +7,11 @@ type Quiz = {
   description: string | null;
 };
 
-const TestsPage = () => {
+type TestsPageProps = {
+  onBack?: () => void;
+};
+
+const TestsPage = ({ onBack }: TestsPageProps) => {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,6 +35,7 @@ const TestsPage = () => {
       <div className="card hero">
         <div className="card-title">Тесты</div>
         <div className="muted">Проверяйте знания и отслеживайте прогресс.</div>
+        {onBack && <button className="back-button" onClick={onBack}>Назад</button>}
       </div>
       <div className="card">
         {error && <div className="error">{error}</div>}

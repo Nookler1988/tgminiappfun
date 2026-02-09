@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { getUserId } from '../lib/auth';
 
-const AdminPage = () => {
+type AdminPageProps = {
+  onBack?: () => void;
+};
+
+const AdminPage = ({ onBack }: AdminPageProps) => {
   const [circleName, setCircleName] = useState('');
   const [circleDesc, setCircleDesc] = useState('');
   const [contentTitle, setContentTitle] = useState('');
@@ -98,6 +102,7 @@ const AdminPage = () => {
       <div className="card hero">
         <div className="card-title">Админка</div>
         <div className="muted">Управляйте кругами, тегами и контентом.</div>
+        {onBack && <button className="back-button" onClick={onBack}>Назад</button>}
         {error && <div className="error">{error}</div>}
       </div>
 

@@ -4,13 +4,14 @@ import { supabase } from '../lib/supabase';
 type ContentItem = {
   id: string;
   title: string;
-  type: 'text' | 'video' | 'audio';
-  body: string | null;
-  url: string | null;
   created_at: string;
 };
 
-const ContentPage = () => {
+type ContentPageProps = {
+  onBack?: () => void;
+};
+
+const ContentPage = ({ onBack }: ContentPageProps) => {
   const [items, setItems] = useState<ContentItem[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +19,7 @@ const ContentPage = () => {
     const load = async () => {
       const { data, error } = await supabase
         .from('content_items')
-        .select('id, title, type, body, url, created_at')
+        .select('id, title, created_at')
         .order('created_at', { ascending: false });
       if (error) {
         setError(error.message);
@@ -32,24 +33,17 @@ const ContentPage = () => {
   return (
     <section className="page">
       <div className="card hero">
-        <div className="card-title">Обучающие материалы</div>
-        <div className="muted">Подборка видео, аудио и статей.</div>
+        <div className="card-title">Блог</div>
+        <div className="muted">Подборка материалов без лишнего.</div>
+        {onBack && <button className="back-button" onClick={onBack}>Назад</button>}
       </div>
       <div className="card">
         {error && <div className="error">{error}</div>}
         <div className="list">
           {items.map((item) => (
             <div key={item.id} className="list-item">
-              <div className="row">
-                <strong>{item.title}</strong>
-                <span className="pill">{item.type}</span>
-              </div>
-              {item.body && <div>{item.body}</div>}
-              {item.url && (
-                <a className="link" href={item.url} target="_blank" rel="noreferrer">
-                  Открыть
-                </a>
-              )}
+              <strong>{item.title}</strong>
+              <div className="muted">{new Date(item.created_at).toLocaleDateString()}</div>
             </div>
           ))}
           {!items.length && <div className="muted">Материалов пока нет.</div>}
